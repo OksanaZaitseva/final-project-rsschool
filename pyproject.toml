@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "Forest Cover Type Prediction Model"
 authors = ["OksanaZaitseva <o.zaitseva@softteco.com>"]
 
+[tool.poetry.scripts]
+train = "forest_ml.train:train"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 click = "^8.1.2"
