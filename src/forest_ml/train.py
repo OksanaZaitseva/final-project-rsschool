@@ -8,8 +8,6 @@ import mlflow.sklearn
 
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-# from sklearn.base import BaseEstimator
 
 from .data import get_dataset
 from .pipeline import create_pipeline
@@ -45,11 +43,22 @@ from .classifier_switcher import ClfSwitcher
 
 # @click.option(
 #     "--estimator",
-#     default=DecisionTreeClassifier(),
-#     # type=BaseEstimator(),
-#     type=ClfSwitcher().estimator,
+#     default='DecisionTreeClassifier()',
+#     type=str,
 #     show_default=True,
 # )
+
+@click.option(
+    "--estimator",
+    default='DecisionTreeClassifier()',
+    type=click.Choice(['DecisionTreeClassifier()',
+            'RandomForestClassifier()',
+            'AdaBoostClassifier()',
+            'KNeighborsClassifier()',
+            'SVC()'], case_sensitive=True),
+
+    show_default=True,
+)
 
 @click.option(
     "--random_state",
@@ -61,7 +70,8 @@ def train(dataset_path: Path,
           random_state: int,
           test_split_ratio: float,
           use_scaler: bool,
-          estimator = DecisionTreeClassifier()
+          # estimator = DecisionTreeClassifier()
+          estimator: str
           ) -> None:
 
     features_train, features_val, target_train, target_val = get_dataset(

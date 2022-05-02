@@ -32,3 +32,4 @@ class ClfSwitcher(BaseEstimator):
 
     def score(self, X, y):
         return self.estimator.score(X, y)
+

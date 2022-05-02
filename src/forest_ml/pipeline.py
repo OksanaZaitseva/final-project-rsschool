@@ -7,13 +7,25 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from .classifier_switcher import ClfSwitcher
 
+dispatcher={'DecisionTreeClassifier()': DecisionTreeClassifier(),
+            'RandomForestClassifier()': RandomForestClassifier(),
+            'AdaBoostClassifier()': AdaBoostClassifier(),
+            'KNeighborsClassifier()': KNeighborsClassifier(),
+            'SVC()': SVC()}
+
+
+# try:
+#     function=dispatcher[w]
+# except KeyError:
+#     raise ValueError('invalid input')
+
 def create_pipeline(
-    use_scaler: bool, estimator
+    use_scaler: bool, estimator: str
 ) -> Pipeline:
     pipeline_steps = []
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
     pipeline_steps.append(
-        ("classifier", ClfSwitcher(estimator=estimator)),
-        )
+            ("classifier", ClfSwitcher(estimator=dispatcher[estimator])),
+            )
     return Pipeline(steps=pipeline_steps)
