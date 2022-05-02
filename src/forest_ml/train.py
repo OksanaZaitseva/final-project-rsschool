@@ -66,4 +66,7 @@ def train(dataset_path: Path,
             metric_results.append(metric(target_val, predict, average='micro'))
 
     click.echo(
-        f"Accuracy: {metric_results[0]}, F1: {metric_results[1]}, Recall: {metric_results[2]}, Precision: {metric_results[3]}")
+        f"Accuracy: {metric_results[0]}, F1: {metric_results[1]}, Recall: {metric_results[2]}, "
+        f"Precision: {metric_results[3]}")
+    dump(pipeline, save_model_path)
+    click.echo(f"Model is saved to {save_model_path}.")
