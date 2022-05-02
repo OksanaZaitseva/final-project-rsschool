@@ -1,13 +1,19 @@
 from pathlib import Path
+from joblib import dump
 
 import click
-import pandas as pd
+# import pandas as pd
+import mlflow
+import mlflow.sklearn
 
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+# from sklearn.base import BaseEstimator
 
 from .data import get_dataset
 from .pipeline import create_pipeline
+from .classifier_switcher import ClfSwitcher
 
 @click.command()
 @click.option(
@@ -23,10 +29,6 @@ from .pipeline import create_pipeline
     type=click.Path(dir_okay=False, writable=True, path_type=Path),
     show_default=True,
 )
-@click.option(
-    "--random-state",
-    default=42,
-    type=int)
 
 @click.option(
     "--test-split-ratio",
@@ -41,32 +43,44 @@ from .pipeline import create_pipeline
     show_default=True,
 )
 
+# @click.option(
+#     "--estimator",
+#     default=DecisionTreeClassifier(),
+#     # type=BaseEstimator(),
+#     type=ClfSwitcher().estimator,
+#     show_default=True,
+# )
+
+@click.option(
+    "--random_state",
+    default=42,
+    type=int)
+
 def train(dataset_path: Path,
           save_model_path: Path,
           random_state: int,
           test_split_ratio: float,
           use_scaler: bool,
-
+          estimator = DecisionTreeClassifier()
           ) -> None:
+
     features_train, features_val, target_train, target_val = get_dataset(
         dataset_path,
         random_state,
         test_split_ratio,
     )
-    pipeline = create_pipeline(use_scaler, random_state)
-    pipeline.fit(features_train, target_train)
 
-    predict = pipeline.predict(features_val)
+    with mlflow.start_run():
+        pipeline = create_pipeline(use_scaler, estimator)
+        pipeline.fit(features_train, target_train, classifier__random_state=random_state)
+        predict = pipeline.predict(features_val)
+        metrics = {'Accuracy':accuracy_score(target_val, predict),
+                   'F1': f1_score(target_val, predict, average='micro'),
+                   'Recall': recall_score(target_val, predict, average='micro'),
+                   'Precision': precision_score(target_val, predict, average='micro')}
+        mlflow.log_param("estimator", estimator)
+        mlflow.log_metrics(metrics)
 
-    metric_results = []
-    for metric in [accuracy_score, f1_score, recall_score, precision_score]:
-        if metric == accuracy_score:
-            metric_results.append(metric(target_val, predict))
-        else:
-            metric_results.append(metric(target_val, predict, average='micro'))
-
-    click.echo(
-        f"Accuracy: {metric_results[0]}, F1: {metric_results[1]}, Recall: {metric_results[2]}, "
-        f"Precision: {metric_results[3]}")
-    dump(pipeline, save_model_path)
-    click.echo(f"Model is saved to {save_model_path}.")
+        click.echo(metrics)
+        dump(pipeline, save_model_path)
+        click.echo(f"Model is saved to {save_model_path}.")

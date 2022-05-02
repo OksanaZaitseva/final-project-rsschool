@@ -6,6 +6,7 @@ class ClfSwitcher(BaseEstimator):
     def __init__(
         self, 
         estimator = DecisionTreeClassifier(),
+
     ):
         """
         A Custom BaseEstimator that can switch between classifiers.
@@ -13,7 +14,8 @@ class ClfSwitcher(BaseEstimator):
         """ 
 
         self.estimator = estimator
-
+    def __name__(self):
+        return str(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
         self.estimator.fit(X, y)

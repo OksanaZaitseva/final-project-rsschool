@@ -8,12 +8,12 @@ from sklearn.preprocessing import StandardScaler
 from .classifier_switcher import ClfSwitcher
 
 def create_pipeline(
-    use_scaler: bool, random_state: int
+    use_scaler: bool, estimator
 ) -> Pipeline:
     pipeline_steps = []
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
     pipeline_steps.append(
-        ("classifier", ClfSwitcher()),
+        ("classifier", ClfSwitcher(estimator=estimator)),
         )
     return Pipeline(steps=pipeline_steps)
