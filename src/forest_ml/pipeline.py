@@ -5,9 +5,9 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from .classifier_switcher import ClfSwitcher
+# from .classifier_switcher import ClfSwitcher
 
-dispatcher={'DecisionTreeClassifier()': DecisionTreeClassifier(),
+classifiers={'DecisionTreeClassifier()': DecisionTreeClassifier(),
             'RandomForestClassifier()': RandomForestClassifier(),
             'AdaBoostClassifier()': AdaBoostClassifier(),
             'KNeighborsClassifier()': KNeighborsClassifier(),
@@ -25,7 +25,5 @@ def create_pipeline(
     pipeline_steps = []
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
-    pipeline_steps.append(
-            ("classifier", ClfSwitcher(estimator=dispatcher[estimator])),
-            )
+    pipeline_steps.append(("classifier", classifiers[estimator]))
     return Pipeline(steps=pipeline_steps)
