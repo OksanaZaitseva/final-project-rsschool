@@ -45,6 +45,21 @@ from .classifier_switcher import ClfSwitcher
 )
 
 @click.option(
+    "--use-uniform",
+    default=False,
+    type=bool,
+    show_default=True,
+)
+
+@click.option(
+    "--use-poly",
+    default=False,
+    type=bool,
+    show_default=True,
+)
+
+
+@click.option(
     "--random_state",
     default=42,
     type=int)
@@ -55,21 +70,25 @@ from .classifier_switcher import ClfSwitcher
     type=click.Choice(['DecisionTreeClassifier()',
             'RandomForestClassifier()',
             'AdaBoostClassifier()',
-            'KNeighborsClassifier()',
+            'GradientBoostingClassifier()',
             'SVC()'], case_sensitive=True),
     show_default=True
 )
 
+@click.option('--forest-param', nargs=2, type=click.Tuple([int, int]))
 
-# @click.option('--dec_tree_', nargs=2, type=click.Tuple([str, int]))
+@click.option('--svc-param', nargs=3, type=click.Tuple([str, int, float]))
 
 def train(dataset_path: Path,
           save_model_path: Path,
           random_state: int,
           test_split_ratio: float,
           use_scaler: bool,
+          use_uniform: bool, 
+          use_poly: bool,
           estimator: str,
-          
+          forest_param: tuple,
+          svc_param: tuple
           ) -> None:
 
     features_train, features_val, target_train, target_val = get_dataset(
@@ -79,31 +98,37 @@ def train(dataset_path: Path,
     )
 
     with mlflow.start_run():
-        pipeline = create_pipeline(use_scaler, estimator)
-        pipeline.set_params(classifier__random_state=random_state)
+
+        pipeline = create_pipeline(use_scaler, use_uniform, use_poly, random_state, estimator)
+
+        params = {"estimator": estimator, 'use_scaler': use_scaler,
+          'use_uniform': use_uniform, 'use_poly': use_poly}
+        pipeline.set_params(classifier__estimator__random_state=random_state)
+        if estimator == 'RandomForestClassifier()':
+            params['max_depth'], params['n_estimators'] = forest_param
+
+            pipeline.set_params(classifier__estimator__max_depth=params['max_depth'],
+                                classifier__estimator__n_estimators=params['n_estimators'])
+        if estimator == 'SVC()':
+            params['kernel'], params['C'], params['gamma']  = svc_param
+
+            pipeline.set_params(classifier__estimator__kernel=params['kernel'],
+                                classifier__estimator__C=params['C'],
+                                classifier__estimator__gamma=params['gamma'])
+
         scores = cross_validate(pipeline, features_train, target_train,
                        scoring=('accuracy', 'f1_weighted',
                                 'recall_weighted', 'precision_weighted'),
-                       return_train_score=True
-                       )
-        click.echo(scores)
-        mlflow.log_param("estimator", estimator)
-        metrics = {'Accuracy': np.mean(scores['test_accuracy']),
+                       return_estimator=True)
+
+        mlflow.log_params(params)
+        click.echo(params)
+        metr = {'Accuracy': np.mean(scores['test_accuracy']),
                    'F1': np.mean(scores['test_f1_weighted']),
                    'Recall': np.mean(scores['test_recall_weighted']),
                    'Precision': np.mean(scores['test_precision_weighted']),}
-        mlflow.log_metrics(metrics)
-        click.echo(metrics)
-        #
-        # pipeline.fit(features_train, target_train, classifier__random_state=random_state)
-        # predict = pipeline.predict(features_val)
-        # metrics = {'Accuracy':accuracy_score(target_val, predict),
-        #            'F1': f1_score(target_val, predict, average='micro'),
-        #            'Recall': recall_score(target_val, predict, average='micro'),
-        #            'Precision': precision_score(target_val, predict, average='micro')}
-        # mlflow.log_param("estimator", estimator)
-        # mlflow.log_metrics(metrics)
-        # # mlflow.sklearn.log_model(pipeline, 'model')
-        # click.echo(metrics)
-        # dump(pipeline, save_model_path)
-        # click.echo(f"Model is saved to {save_model_path}.")
+        mlflow.log_metrics(metr)
+        click.echo(metr)
+
+        dump(pipeline, save_model_path)
+        click.echo(f"Model is saved to {save_model_path}.")

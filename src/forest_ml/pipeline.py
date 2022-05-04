@@ -21,7 +21,7 @@ norm_col = ['Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology',
 
 
 def create_pipeline(
-        use_scaler: bool, uniform: bool, poly: bool,
+        use_scaler: bool, use_uniform: bool, use_poly: bool, random_state: int,
         estimator: str = 'DecisionTreeClassifier()', degree: int = 2, norm_col=norm_col
 ) -> Pipeline:
     preproc_norm = ColumnTransformer(
@@ -36,10 +36,10 @@ def create_pipeline(
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
 
-    if uniform:
+    if use_uniform:
         pipeline_steps.append(("uniform", preproc_norm))
 
-    if poly:
+    if use_poly:
         pipeline_steps.append(("polynom", preproc_poly))
 
     pipeline_steps.append(("classifier", ClfSwitcher(classifiers[estimator])))
