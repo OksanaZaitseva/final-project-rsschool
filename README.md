@@ -4,7 +4,7 @@ This project uses [Forest train dataset](https://www.kaggle.com/competitions/for
 ## Usage
 This package allows train model for integer classification for the forest cover type (seven types). 
 1. Clone this repository to your machine.
-2. Download [Heart Disease](https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset) dataset, save csv locally (default path is *data/heart.csv* in repository's root).
+2. Download [Forest train](https://www.kaggle.com/competitions/forest-cover-type-prediction) dataset, save csv locally (default path is *data/heart.csv* in repository's root).
 3. Make sure Python 3.9 and [Poetry](https://python-poetry.org/docs/) are installed on your machine (I use Poetry 1.1.11).
 4. Install the project dependencies (*run this and following commands in a terminal, from the root of a cloned repository*):
 ```sh
@@ -33,3 +33,14 @@ poetry run model_selection --help
 ```sh
 poetry run mlflow ui
 ```
+
+## Experiments (Task 8)
+1. Five models were used (DecisionTreeClassifier,
+            RandomForestClassifier,
+            AdaBoostClassifier,
+            GradientBoostingClassifier,
+            SVC) with default hyperparameters.
+2. Two models (RandomForestClassifier, SVC) were used with at least three different sets of hyperparameters for each model. 
+3. Two best models from previous step were used with at least tree different feature engineering techniques for each model. (4 points)
+
+Only part of experiments are provided on screenshot.
