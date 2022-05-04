@@ -58,7 +58,6 @@ from .classifier_switcher import ClfSwitcher
     show_default=True,
 )
 
-
 @click.option(
     "--random_state",
     default=42,

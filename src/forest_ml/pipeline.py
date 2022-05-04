@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
@@ -14,22 +15,16 @@ classifiers = {'DecisionTreeClassifier()': DecisionTreeClassifier(),
                'GradientBoostingClassifier()': GradientBoostingClassifier(),
                'SVC()': SVC()}
 
-norm_col = ['Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology',
-            'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways',
-            'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm',
-            'Horizontal_Distance_To_Fire_Points']
-
-
 def create_pipeline(
         use_scaler: bool, use_uniform: bool, use_poly: bool, random_state: int,
-        estimator: str = 'DecisionTreeClassifier()', degree: int = 2, norm_col=norm_col
+        estimator: str = 'DecisionTreeClassifier()', degree: int = 2
 ) -> Pipeline:
     preproc_norm = ColumnTransformer(
-        [('quantile', QuantileTransformer(output_distribution='normal', random_state=random_state), norm_col)],
+        [('quantile', QuantileTransformer(output_distribution='normal', random_state=random_state), np.linspace(0, 9, 9, dtype=int))],
         remainder='passthrough')
 
     preproc_poly = ColumnTransformer(
-        [('polynom', PolynomialFeatures(degree, interaction_only=True), norm_col)],
+        [('polynom', PolynomialFeatures(degree, interaction_only=True), np.linspace(0, 9, 9, dtype=int))],
         remainder='passthrough')
 
     pipeline_steps = []
