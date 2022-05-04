@@ -43,4 +43,4 @@ poetry run mlflow ui
 2. Two models (RandomForestClassifier, SVC) were used with at least three different sets of hyperparameters for each model. 
 3. Two best models from previous step were used with at least tree different feature engineering techniques for each model. (4 points)
 
-Only part of experiments are provided on screenshot.
+Only part of experiments are provided on screenshot.![ml_flow_exper_screen](https://user-images.githubusercontent.com/89841675/166705198-52ac9cff-d6eb-4d91-9740-2ccb2f97d57b.png)
