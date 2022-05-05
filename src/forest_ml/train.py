@@ -64,6 +64,11 @@ from .classifier_switcher import ClfSwitcher
     type=int)
 
 @click.option(
+    "--cv-n",
+    default=5,
+    type=int)
+
+@click.option(
     "--estimator",
     default='DecisionTreeClassifier()',
     type=click.Choice(['DecisionTreeClassifier()',
@@ -87,7 +92,8 @@ def train(dataset_path: Path,
           use_poly: bool,
           estimator: str,
           forest_param: tuple,
-          svc_param: tuple
+          svc_param: tuple,
+          cv_n: int
           ) -> None:
 
     features_train, features_val, target_train, target_val = get_dataset(
@@ -103,6 +109,7 @@ def train(dataset_path: Path,
         params = {"estimator": estimator, 'use_scaler': use_scaler,
           'use_uniform': use_uniform, 'use_poly': use_poly}
         pipeline.set_params(classifier__estimator__random_state=random_state)
+
         if estimator == 'RandomForestClassifier()':
             params['max_depth'], params['n_estimators'] = forest_param
 
@@ -118,7 +125,7 @@ def train(dataset_path: Path,
         scores = cross_validate(pipeline, features_train, target_train,
                        scoring=('accuracy', 'f1_weighted',
                                 'recall_weighted', 'precision_weighted'),
-                       return_estimator=True)
+                       return_estimator=True, cv=cv_n)
 
         mlflow.log_params(params)
         click.echo(params)

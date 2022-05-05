@@ -2,8 +2,7 @@
 
    Inner loop calls scikit-learn’s GridSearchCV to achieve grid search of hyperparameter
         evaluated on the inner loop val set,
-    Outer loop can calls KFold for generalization error.
-
+    Outer loop can call KFold for generalization error.
     Only best models are added to MLFlow"""
 
 

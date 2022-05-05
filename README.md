@@ -34,13 +34,41 @@ poetry run model_selection --help
 poetry run mlflow ui
 ```
 
-## Experiments (Task 8)
-1. Five models were used (DecisionTreeClassifier,
+## Experiments 
+### (Task 7)
+Four metrics were used for evaluation: accuracy, f1, recall, precision. F1 was used for final choosing of best model.
+Details about metrics realisation can be found in *train.py* and *model_selection.py* files.
+KFold cross validation is used for training separate models (command *train*, file *train.py*).
+Nested cross validation is used for automatic hyperparameter search (command *model_selection*, file *model_selection.py*).
+
+### (Task 8)
+1. Using command *train* five models were evaluated (DecisionTreeClassifier,
             RandomForestClassifier,
             AdaBoostClassifier,
             GradientBoostingClassifier,
             SVC) with default hyperparameters.
 2. Two models (RandomForestClassifier, SVC) were used with at least three different sets of hyperparameters for each model. 
-3. Two best models from previous step were used with at least tree different feature engineering techniques for each model. (4 points)
+3. Two best models from previous step were used with at least tree different feature engineering techniques for each model:
+   1. StandartScaler,
+   2. QuantileTransformer (for first 10 columns in dataset),
+   3. PolynomialFeatures (for first 10 columns in dataset). 
+   Feature engineering techniques can be found in *pipeline.py* file.
 
 Only part of experiments are provided on screenshot.![ml_flow_exper_screen](https://user-images.githubusercontent.com/89841675/166705198-52ac9cff-d6eb-4d91-9740-2ccb2f97d57b.png)
+ The Best results (accuracy: 0.855, f1: 0.853, recall: 0.855, precision: 0.853) was obtained with following parameters:
+```sh
+poetry run train --estimator=RandomForestClassifier() --forest-param=50 100 --use-scaler=False --use-uniform=True --use-poly=False
+```
+
+### (Task 9)
+Command *model_selection* were developed for conducting automatic hyperparameter search for each model. Code is provided in *model_selection.py* file.
+Command model_selection run Grid Search with parameters that are placed in *parameters.py* file and can be added manually.
+Function runs Grid Search using nested cross validation. Only best model (or models, if metrics are equal) is added to MLFlow. 
+
+New classification algorithms can be added to function if they are Sklearn classifiers. For using other algorithms they must be imported through
+pipeline.py file (for example: *from sklearn.neighbors import KNeighborsClassifier*).
+Please note, if you decide to rerun model_selection with parameters from parameters.py file, it will take quite a lot time.
+Five models were tested with different parameters and different feature engineering techniques.
+
+The best model always was RandomForestClassifier (possibly because I didn't find good hyperparameters for other models).
+Part of experiments is provided on screenshot:
