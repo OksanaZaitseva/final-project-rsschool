@@ -72,3 +72,4 @@ Five models were tested with different parameters and different feature engineer
 
 The best model always was RandomForestClassifier (possibly because I didn't find good hyperparameters for other models).
 Part of experiments is provided on screenshot:
+![ml_flow_grid_screen](https://user-images.githubusercontent.com/89841675/166950723-8445cce5-dd6e-4b2c-8fbd-4e67d2317b4b.png)
