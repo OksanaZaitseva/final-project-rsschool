@@ -57,7 +57,7 @@ Nested cross validation is used for automatic hyperparameter search (command *mo
 Only part of experiments are provided on screenshot.![ml_flow_exper_screen](https://user-images.githubusercontent.com/89841675/166705198-52ac9cff-d6eb-4d91-9740-2ccb2f97d57b.png)
  The Best results (accuracy: 0.855, f1: 0.853, recall: 0.855, precision: 0.853) was obtained with following parameters:
 ```sh
-poetry run train --estimator=RandomForestClassifier() --forest-param=50 100 --use-scaler=False --use-uniform=True --use-poly=False
+poetry run train --estimator=RandomForestClassifier() --forest-param=gini 32 150 --use-scaler=True --use-uniform=True --use-poly=False
 ```
 
 ### (Task 9)
