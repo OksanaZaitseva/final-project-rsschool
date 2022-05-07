@@ -1,4 +1,3 @@
-
 """ Dictionary 'parameters' contains parameters for GridSearch
     Dictionary is used by default. Content can be added for conducting  other experiments"""
 
@@ -6,13 +5,17 @@
 import numpy as np
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    AdaBoostClassifier,
+    GradientBoostingClassifier,
+)
 
 
 parameters = [
     {
-        'classifier__estimator': [DecisionTreeClassifier()],
-        'classifier__estimator__criterion': ['gini', 'entropy'],
+        "classifier__estimator": [DecisionTreeClassifier()],
+        "classifier__estimator__criterion": ["gini", "entropy"],
         # 'classifier__estimator__max_depth': np.linspace(3, 15, 5, dtype=int),
     },
     # {
@@ -38,4 +41,3 @@ parameters = [
     #     'classifier__estimator__gamma': [0.001, 0.0001],
     # },
 ]
-
