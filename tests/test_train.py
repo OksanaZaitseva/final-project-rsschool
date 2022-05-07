@@ -3,7 +3,6 @@ import pytest
 
 from forest_ml.train import train
 
-
 @pytest.fixture
 def runner() -> CliRunner:
     """Fixture providing click runner."""

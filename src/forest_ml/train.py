@@ -3,13 +3,9 @@ from joblib import dump
 
 import click
 import numpy as np
-# import pandas as pd
 import mlflow
 import mlflow.sklearn
 
-from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-from sklearn.model_selection import train_test_split
-# from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_validate
 
 from .data import get_dataset

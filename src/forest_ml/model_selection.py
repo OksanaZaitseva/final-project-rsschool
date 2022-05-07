@@ -13,9 +13,7 @@ import pandas as pd
 import mlflow
 import mlflow.sklearn
 
-from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-from sklearn.model_selection import train_test_split, cross_validate, GridSearchCV, KFold
-
+from sklearn.model_selection import cross_validate, GridSearchCV, KFold
 
 from .data import get_dataset
 from .pipeline import create_pipeline
@@ -115,10 +113,6 @@ def model_selection(dataset_path: Path,
             best_model = result.best_estimator_
             yhat = best_model.predict(X_test)
             test_scores = metrics_group(y_test, yhat)
-            # test_scores = {'Accuracy': accuracy_score(y_test, yhat),
-            #                'F1': f1_score(y_test, yhat, average='weighted'),
-            #                'Recall': recall_score(y_test, yhat, average='weighted'),
-            #                'Precision': precision_score(y_test, yhat, average='weighted')}
             outer_metrics = outer_metrics.append(test_scores, ignore_index=True)
             best_params.append(gscv.best_params_)
 

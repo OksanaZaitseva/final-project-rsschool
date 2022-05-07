@@ -2,7 +2,6 @@ import click
 from click.testing import CliRunner
 import pytest
 from forest_ml.model_selection import model_selection
-# from parameters_test import parameters
 from forest_ml.parameters import parameters
 
 @pytest.fixture
@@ -24,7 +23,7 @@ def test_error_for_invalid_test_split_ratio(
 def test_error_for_invalid_cross_val_split(
     runner: CliRunner
 ) -> None:
-    """It fails when cross_val split  is 0."""
+    """It fails when cross_val split is 0."""
     result = runner.invoke(
         model_selection, ["--outer-splits", 0, "--inner-splits", 0]
     )
@@ -33,10 +32,10 @@ def test_error_for_invalid_cross_val_split(
 
 
 def test_error_for_invalid_estimator_params(
-    runner: CliRunner
 ) -> None:
-    """It fails when parameters dict contains invalid parameters for classifiers."""
-    # result = runner.invoke(
+    """It fails when parameters dict contains invalid parameters for classifiers.
+        Shows incorrect parameters for estimators"""
+
     res = {}
     for estim in parameters:
         params = [x.rsplit('__')[-1] for x in estim.keys() if x != 'classifier__estimator']
@@ -45,7 +44,4 @@ def test_error_for_invalid_estimator_params(
         res = {x: res[x] for x in res.keys() if len(res[x]) > 0}
     if len(res) > 0:
             click.echo(f'Some values are not in parameters of estimators: {res}')
-            # return()
-    # result = model_selection(parameters=parameters)
     assert len(res) == 0
-    # assert "Invalid parameter criterion for estimator'" in result.output
