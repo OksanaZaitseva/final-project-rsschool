@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, Gradien
 
 parameters = [
     {
-        'classifier__estimator': [DecisionTreeClassifier()], 
+        'classifier__estimator': [DecisionTreeClassifier()],
         'classifier__estimator__criterion': ['gini', 'entropy'],
         'classifier__estimator__max_depth': np.linspace(3, 15, 5, dtype=int),
     },
@@ -38,4 +38,12 @@ parameters = [
         'classifier__estimator__gamma': [0.001, 0.0001],
     },
 ]
+
+# parameters=[    {
+#         'classifier__estimator': [GradientBoostingClassifier()],
+#         'classifier__estimator__n_estimators': np.linspace(50, 150, 5, dtype=int),
+#         "classifier__estimator__max_depth":[3, 5, 8],
+#         'classifier__estimator__learning_rate': [0.8, 1.0],
+#         'classifier__estimator__gamma': [0.001, 0.0001],
+#     },]
 

@@ -14,15 +14,15 @@ import mlflow
 import mlflow.sklearn
 
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import train_test_split, cross_validate, GridSearchCV, KFold
+
 
 from .data import get_dataset
 from .pipeline import create_pipeline
 from .classifier_switcher import ClfSwitcher
 from .parameters import parameters
+from .supp_functions import parameters_check, metrics_group
 
-from sklearn.model_selection import GridSearchCV, KFold
 
 
 @click.command()
@@ -67,12 +67,12 @@ from sklearn.model_selection import GridSearchCV, KFold
 @click.option(
     "--outer-splits",
     default=5,
-    type=int)
+    type=click.IntRange(1, 21, min_open=True, max_open=True))
 
 @click.option(
     "--inner-splits",
     default=3,
-    type=int)
+    type=click.IntRange(1, 21, min_open=True, max_open=True))
 
 
 def model_selection(dataset_path: Path,
@@ -82,35 +82,43 @@ def model_selection(dataset_path: Path,
           use_uniform: bool,
           use_poly: bool,
           outer_splits: int,
-          inner_splits: int
+          inner_splits: int,
+          parameters=parameters
           ) -> None:
         features_train, features_val, target_train, target_val = get_dataset(
         dataset_path,
         random_state,
         test_split_ratio,
     )
+        if parameters_check(parameters):
+            return()
         metric_list = ('accuracy', 'f1_weighted',
                                     'recall_weighted', 'precision_weighted')
         params = {'use_scaler': use_scaler,
                   'use_uniform': use_uniform, 'use_poly': use_poly}
         outer_metrics = pd.DataFrame(columns=['Accuracy', 'F1', 'Recall', 'Precision'])
+
+
         best_params = []
+        pipeline = create_pipeline(use_scaler=True, use_uniform=False, use_poly=False, random_state=random_state)
+
         cv_outer = KFold(n_splits=outer_splits, shuffle=True, random_state=random_state)
         for train_ix, test_ix in cv_outer.split(features_train):
             X_train, X_test = features_train.iloc[train_ix, :], features_train.iloc[test_ix, :]
             y_train, y_test = target_train.iloc[train_ix], target_train.iloc[test_ix]
             cv_inner = KFold(n_splits=inner_splits, shuffle=True, random_state=random_state)
-            pipeline = create_pipeline(use_scaler=True, use_uniform=False, use_poly=False, random_state=random_state)
+
+
             gscv = GridSearchCV(pipeline, parameters, cv=cv_inner,
                                 scoring=metric_list, refit='f1_weighted')
-
             result = gscv.fit(X_train, y_train)
             best_model = result.best_estimator_
             yhat = best_model.predict(X_test)
-            test_scores = {'Accuracy': accuracy_score(y_test, yhat),
-                           'F1': f1_score(y_test, yhat, average='weighted'),
-                           'Recall': recall_score(y_test, yhat, average='weighted'),
-                           'Precision': precision_score(y_test, yhat, average='weighted')}
+            test_scores = metrics_group(y_test, yhat)
+            # test_scores = {'Accuracy': accuracy_score(y_test, yhat),
+            #                'F1': f1_score(y_test, yhat, average='weighted'),
+            #                'Recall': recall_score(y_test, yhat, average='weighted'),
+            #                'Precision': precision_score(y_test, yhat, average='weighted')}
             outer_metrics = outer_metrics.append(test_scores, ignore_index=True)
             best_params.append(gscv.best_params_)
 
@@ -131,5 +139,3 @@ def model_selection(dataset_path: Path,
 
 
 
-
-    

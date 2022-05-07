@@ -15,6 +15,7 @@ from sklearn.model_selection import cross_validate
 from .data import get_dataset
 from .pipeline import create_pipeline
 from .classifier_switcher import ClfSwitcher
+from .supp_functions import metrics_group
 
 @click.command()
 @click.option(
@@ -66,7 +67,7 @@ from .classifier_switcher import ClfSwitcher
 @click.option(
     "--cv-n",
     default=5,
-    type=int)
+    type=click.IntRange(1, 21, min_open=True, max_open=True))
 
 @click.option(
     "--estimator",
@@ -79,7 +80,7 @@ from .classifier_switcher import ClfSwitcher
     show_default=True
 )
 
-@click.option('--forest-param', nargs=2, type=click.Tuple([int, int]))
+@click.option('--forest-param', nargs=3, type=click.Tuple([str, int, int]))
 
 @click.option('--svc-param', nargs=3, type=click.Tuple([str, int, float]))
 
@@ -103,17 +104,15 @@ def train(dataset_path: Path,
     )
 
     with mlflow.start_run():
-
         pipeline = create_pipeline(use_scaler, use_uniform, use_poly, random_state, estimator)
-
         params = {"estimator": estimator, 'use_scaler': use_scaler,
-          'use_uniform': use_uniform, 'use_poly': use_poly}
+            'use_uniform': use_uniform, 'use_poly': use_poly}
         pipeline.set_params(classifier__estimator__random_state=random_state)
 
         if estimator == 'RandomForestClassifier()':
-            params['max_depth'], params['n_estimators'] = forest_param
-
-            pipeline.set_params(classifier__estimator__max_depth=params['max_depth'],
+            params['criterion'], params['max_depth'], params['n_estimators'] = forest_param
+            pipeline.set_params(classifier__estimator__criterion=params['criterion'],
+                            classifier__estimator__max_depth=params['max_depth'],
                                 classifier__estimator__n_estimators=params['n_estimators'])
         if estimator == 'SVC()':
             params['kernel'], params['C'], params['gamma']  = svc_param
@@ -132,9 +131,13 @@ def train(dataset_path: Path,
         metr = {'Accuracy': np.mean(scores['test_accuracy']),
                    'F1': np.mean(scores['test_f1_weighted']),
                    'Recall': np.mean(scores['test_recall_weighted']),
-                   'Precision': np.mean(scores['test_precision_weighted']),}
+                   'Precision': np.mean(scores['test_precision_weighted'])}
         mlflow.log_metrics(metr)
         click.echo(metr)
+        pipeline.fit(features_train, target_train)
+        test_pred = pipeline.predict(features_val)
+        test_metr = metrics_group(target_val, test_pred)
 
+        click.echo(test_metr)
         dump(pipeline, save_model_path)
         click.echo(f"Model is saved to {save_model_path}.")
