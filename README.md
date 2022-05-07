@@ -2,37 +2,67 @@ Homework for RS School Machine Learning course.
 This project uses [Forest train dataset](https://www.kaggle.com/competitions/forest-cover-type-prediction).
 
 ## Usage
-This package allows train model for integer classification for the forest cover type (seven types). 
+This package allows train model for integer classification for the forest cover type (seven types) and predict target feature on new dataset. 
 1. Clone this repository to your machine.
-2. Download [Forest train](https://www.kaggle.com/competitions/forest-cover-type-prediction) dataset, save csv locally (default path is *data/heart.csv* in repository's root).
+2. Download [Forest train](https://www.kaggle.com/competitions/forest-cover-type-prediction) dataset, save csv locally (default path is *data/train.csv* in repository's root).
 3. Make sure Python 3.9 and [Poetry](https://python-poetry.org/docs/) are installed on your machine (I use Poetry 1.1.11).
 4. Install the project dependencies (*run this and following commands in a terminal, from the root of a cloned repository*):
 ```sh
 poetry install --no-dev
 ```
-5. Run train with the following command in order to train one model with KFold cross-validation:
-```sh
-poetry run train -d <path to csv with data> -s <path to save trained model>
-```
-You can configure additional options (such as classifiers and hyperparameters (including max_depth, n_estimators for RandomForestClassifier and kernel, C, gamma for SVC)) in the CLI. 
-To get a full list of them, use help:
-```sh
-poetry run train --help
-```
+5. Package includes three commands for model selection, evaluation and prediction:
+   5.1. Run train with the following command in order to train one model with KFold cross-validation:
+    ```sh
+    poetry run train -d <path to csv with data> -s <path to save trained model>
+    ```
+    You can configure additional options (such as classifiers and hyperparameters (including criterion, max_depth, n_estimators for RandomForestClassifier and kernel, C, gamma for SVC)) in the CLI. 
+    To get a full list of them, use help:
+    ```sh
+    poetry run train --help
+    ```
 
-6. Run model_selection with the following command in order to conduct GridSearch with nested cross-validation.
-Parameters for Grid Search are placed in parameters.py file and can be added manually.
-```sh
-poetry run model_selection -d <path to csv with data> 
-```
-You can configure additional options in the CLI.  To get a full list of them, use help:
-```sh
-poetry run model_selection --help
-```
-7. Run MLflow UI to see the information about experiments you conducted:
+   5.2. Run model_selection with the following command in order to conduct GridSearch with nested cross-validation.
+   Parameters for Grid Search are placed in parameters.py file and can be added manually. Function is for choosing model. If you need to save model, plead run command train with chosen parameters.
+    ```sh
+    poetry run model_selection -d <path to csv with data> 
+    ```
+    You can configure additional options in the CLI.  To get a full list of them, use help:
+    ```sh
+    poetry run model_selection --help
+    ```
+   5.3. Run predict with the following command in order to predict target values for new dataset using previously received during training model (train command).  If model wasn't previously received, you will get warning notification. You can use dataset with target column and receive metrics and saved dataset with prediction,
+or use dataset without target value and receive .csv file according to kaggle submission. You can check this command with test.csv file from [Forest dataset](https://www.kaggle.com/competitions/forest-cover-type-prediction).  Please, download the file previously and save it locally (default path is *data/test.csv* in repository's root).
+    ```sh
+    poetry run predict -d <path to csv with data> -m <path to model> -s <path to save received dataset>
+    ```
+
+6. Run MLflow UI to see the information about experiments you conducted with commands train and model_selection:
 ```sh
 poetry run mlflow ui
 ```
+
+## Development
+
+The code in this repository was tested, formatted with black, and pass mypy typechecking before being commited to the repository.
+
+Install all requirements (including dev requirements) to poetry environment:
+```
+poetry install
+```
+Now you can use developer instruments, e.g. pytest:
+```
+poetry run pytest
+```
+To run all sessions of testing and formatting in a single command, [nox](https://nox.thea.codes/en/stable/) was installed and used : 
+```
+nox [-r]
+```
+Code was formatted with [black](https://github.com/psf/black) by using either nox or poetry:
+```
+nox -[r]s black
+poetry run black src tests noxfile.py
+```
+
 
 ## Experiments 
 ### (Task 7)
@@ -73,3 +103,11 @@ Five models were tested with different parameters and different feature engineer
 The best model always was RandomForestClassifier (possibly because I didn't find good hyperparameters for other models).
 Part of experiments is provided on screenshot:
 ![ml_flow_grid_screen](https://user-images.githubusercontent.com/89841675/166950723-8445cce5-dd6e-4b2c-8fbd-4e67d2317b4b.png)
+
+### (Task 11)
+All tests are in test folder. Type of tests:
+    Five tests for error cases without using fake/sample data and filesystem isolation, as in the demo. 
+    Three tests for a valid input case with test data, filesystem isolation, and checking saved model for correctness. Input datasets are in tests/tem_dir folder
+
+### (Task 12)
+Code is formatted with black and lint it with flake8:

@@ -4,7 +4,8 @@ from joblib import dump
 import click
 import numpy as np
 import mlflow
-import mlflow.sklearn
+# from typing import Tuple
+
 
 from sklearn.model_selection import cross_validate
 
@@ -72,6 +73,7 @@ from .supp_functions import metrics_group
 )
 @click.option("--forest-param", nargs=3, type=click.Tuple([str, int, int]))
 @click.option("--svc-param", nargs=3, type=click.Tuple([str, int, float]))
+
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -81,8 +83,8 @@ def train(
     use_uniform: bool,
     use_poly: bool,
     estimator: str,
-    forest_param: tuple,
-    svc_param: tuple,
+    forest_param: tuple[str, int, int],
+    svc_param: tuple[str, int, int],
     cv_n: int,
 ) -> None:
 

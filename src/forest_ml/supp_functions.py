@@ -4,7 +4,9 @@ import click
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 
 
-def parameters_check(parameters):
+def parameters_check(parameters: list):
+    """Checks if parameters dict contains valid parameters for classifiers.
+    Shows incorrect parameters for estimators"""
     res = {}
     for estim in parameters:
         params = [
@@ -25,11 +27,13 @@ def parameters_check(parameters):
         click.echo("Parameters are checked")
 
 
-def metrics_group(y_true, y_pred):
+def metrics_group(y_true: pd.DataFrame, y_pred: pd.Series):
+    """Calculate four metrics for target and predict values """
+
     test_scores = {
         "Accuracy": accuracy_score(y_true, y_pred),
         "F1": f1_score(y_true, y_pred, average="weighted"),
         "Recall": recall_score(y_true, y_pred, average="weighted"),
-        "Precision": precision_score(y_true, y_pred, average="weighted"),
+        "Precision": precision_score(y_true, y_pred, average="weighted")
     }
     return test_scores

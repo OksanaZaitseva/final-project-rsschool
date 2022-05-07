@@ -30,8 +30,7 @@ from .supp_functions import metrics_group
     type=click.Path(dir_okay=False, writable=True, path_type=Path),
     show_default=True,
 )
-def predict(model_path: Path, dataset_path: Path, save_submit_path: Path) -> None:
-
+def predict(model_path: Path, dataset_path: Path, save_submit_path: Path):
     try:
         loaded_model = joblib.load(model_path)
     except FileNotFoundError:
@@ -46,7 +45,7 @@ def predict(model_path: Path, dataset_path: Path, save_submit_path: Path) -> Non
         predicted = loaded_model.predict(features)
         test_metr = metrics_group(target, predicted)
         click.echo(test_metr)
-        pred.to_csv(save_submit_path)
+        predicted.to_csv(save_submit_path)
     else:
         predicted = loaded_model.predict(dataset)
         pred = pd.DataFrame(predicted, columns=["Cover_Type"], index=dataset.index)
