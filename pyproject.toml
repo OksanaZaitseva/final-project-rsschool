@@ -7,6 +7,7 @@ authors = ["OksanaZaitseva <o.zaitseva@softteco.com>"]
 [tool.poetry.scripts]
 train = "forest_ml.train:train"
 model_selection = "forest_ml.model_selection:model_selection"
+predict = "forest_ml.predict:predict"
 
 [tool.poetry.dependencies]
 python = "^3.9"
