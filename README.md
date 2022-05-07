@@ -1,3 +1,4 @@
+![black](https://user-images.githubusercontent.com/89841675/167271178-9acec3e3-e296-4d92-9fbc-c22705288ab8.png)
 Homework for RS School Machine Learning course.
 This project uses [Forest train dataset](https://www.kaggle.com/competitions/forest-cover-type-prediction).
 
