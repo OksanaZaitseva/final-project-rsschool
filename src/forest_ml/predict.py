@@ -46,6 +46,7 @@ def predict(model_path: Path, dataset_path: Path, save_submit_path: Path) -> Non
         predicted = loaded_model.predict(features)
         test_metr = metrics_group(target, predicted)
         click.echo(test_metr)
+        pred.to_csv(save_submit_path)
     else:
         predicted = loaded_model.predict(dataset)
         pred = pd.DataFrame(predicted, columns=["Cover_Type"], index=dataset.index)
