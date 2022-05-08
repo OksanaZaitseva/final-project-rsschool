@@ -45,6 +45,7 @@ poetry run mlflow ui
 ## Development
 
 The code in this repository was tested, formatted with black, and pass mypy typechecking before being commited to the repository.
+Development was condacted on Windows 10. Some corrections was added to dev files in comperison with demo project files.
 
 Install all requirements (including dev requirements) to poetry environment:
 ```
@@ -54,14 +55,17 @@ Now you can use developer instruments, e.g. pytest:
 ```
 poetry run pytest
 ```
+Code was formatted with [black](https://github.com/psf/black):
+```
+poetry run black src tests noxfile.py
+```
+Mypy:
+```
+poetry run mypy src tests noxfile.py
+```
 To run all sessions of testing and formatting in a single command, [nox](https://nox.thea.codes/en/stable/) was installed and used : 
 ```
-nox [-r]
-```
-Code was formatted with [black](https://github.com/psf/black) by using either nox or poetry:
-```
-nox -[r]s black
-poetry run black src tests noxfile.py
+python -m nox -r
 ```
 
 
@@ -107,9 +111,17 @@ Part of experiments is provided on screenshot:
 
 ### (Task 11)
 All tests are in test folder. Type of tests:
-    Five tests for error cases without using fake/sample data and filesystem isolation, as in the demo. 
+    Four tests for error cases without using fake/sample data and filesystem isolation, as in the demo. 
     Three tests for a valid input case with test data, filesystem isolation, and checking saved model for correctness. Input datasets are in tests/tem_dir folder
 
 ### (Task 12)
-Code is formatted with black and lint it with flake8:
+Code is formatted with black and lint with flake8:
 ![black](https://user-images.githubusercontent.com/89841675/167271178-9acec3e3-e296-4d92-9fbc-c22705288ab8.png)
+
+### (Task 13)
+Code is type annotated with mypy:
+![mypy](https://user-images.githubusercontent.com/89841675/167301459-bdd351eb-a9f7-46f5-8720-f456b56c3904.png)
+
+### (Task 14)
+To combine steps of testing and linting into a single command, nox was used:
+![nox](https://user-images.githubusercontent.com/89841675/167301464-8c8f534f-e88f-4aab-bb02-1f5b462ad40d.png)
