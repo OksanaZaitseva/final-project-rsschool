@@ -15,7 +15,7 @@ from sklearn.preprocessing import (
 )
 from sklearn.compose import ColumnTransformer
 
-from .classifier_switcher import ClfSwitcher
+# from .classifier_switcher import ClfSwitcher
 
 classifiers = {
     "DecisionTreeClassifier()": DecisionTreeClassifier(),
@@ -68,5 +68,6 @@ def create_pipeline(
     if use_poly:
         pipeline_steps.append(("polynom", preproc_poly))
 
-    pipeline_steps.append(("classifier", ClfSwitcher(classifiers[estimator])))
+    pipeline_steps.append(("classifier", classifiers[estimator]))
+
     return Pipeline(steps=pipeline_steps)

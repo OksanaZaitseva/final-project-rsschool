@@ -4,7 +4,7 @@ import pytest
 import joblib
 import numpy as np
 import pandas as pd
-
+from pathlib import Path
 from forest_ml.data import get_dataset
 from forest_ml.train import train
 from forest_ml.predict import predict
@@ -20,7 +20,7 @@ def test_error_for_invalid_dataset() -> None:
     """It fails when loaded dataset doesn't contain appropriate data."""
     try:
         features_train, features_val, target_train, target_val = get_dataset(
-            "tests/tem_dirs/test_dataset.csv", 42, 0.2
+            Path("tests/tem_dirs/test_dataset.csv"), 42, 0.2
         )
         col_names = [
             "Elevation",
@@ -109,7 +109,7 @@ def test_keep_dir(
                 "--dataset-path",
                 "train_df.csv",
                 "--cv-n",
-                2,
+                "2",
             ],
         )
         click.echo(result_train.output)

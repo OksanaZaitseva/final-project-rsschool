@@ -11,13 +11,11 @@ from pathlib import Path
 import click
 import pandas as pd
 import mlflow
-import mlflow.sklearn
 
 from sklearn.model_selection import cross_validate, GridSearchCV, KFold
 
 from .data import get_dataset
 from .pipeline import create_pipeline
-from .classifier_switcher import ClfSwitcher
 from .parameters import parameters
 from .supp_functions import parameters_check, metrics_group
 
@@ -72,7 +70,6 @@ def model_selection(
     use_poly: bool,
     outer_splits: int,
     inner_splits: int,
-    parameters=parameters,
 ) -> None:
     features_train, features_val, target_train, target_val = get_dataset(
         dataset_path,
@@ -80,7 +77,7 @@ def model_selection(
         test_split_ratio,
     )
     if parameters_check(parameters):
-        return ()
+        return
     metric_list = ("accuracy", "f1_weighted", "recall_weighted", "precision_weighted")
     params = {
         "use_scaler": use_scaler,
@@ -89,7 +86,7 @@ def model_selection(
     }
     outer_metrics = pd.DataFrame(columns=["Accuracy", "F1", "Recall", "Precision"])
 
-    best_params = []
+    best_params = list()
     pipeline = create_pipeline(
         use_scaler=True, use_uniform=False, use_poly=False, random_state=random_state
     )
@@ -127,6 +124,8 @@ def model_selection(
     for x in range(params_best.shape[0]):
         with mlflow.start_run():
             params_add = params_best.loc[x, params_best.columns[:num_params]].to_dict()
+            params_add["estimator"] = params_add["classifier"]
+            del params_add["classifier"]
             params_add.update(params)
             mlflow.log_params(params_add)
             metr = params_best.loc[

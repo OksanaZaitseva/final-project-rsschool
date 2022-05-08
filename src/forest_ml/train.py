@@ -4,14 +4,15 @@ from joblib import dump
 import click
 import numpy as np
 import mlflow
-# from typing import Tuple
+from typing import Tuple
 
 
 from sklearn.model_selection import cross_validate
 
 from .data import get_dataset
 from .pipeline import create_pipeline
-from .classifier_switcher import ClfSwitcher
+
+# from .classifier_switcher import ClfSwitcher
 from .supp_functions import metrics_group
 
 
@@ -73,7 +74,6 @@ from .supp_functions import metrics_group
 )
 @click.option("--forest-param", nargs=3, type=click.Tuple([str, int, int]))
 @click.option("--svc-param", nargs=3, type=click.Tuple([str, int, float]))
-
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -83,8 +83,8 @@ def train(
     use_uniform: bool,
     use_poly: bool,
     estimator: str,
-    forest_param: tuple[str, int, int],
-    svc_param: tuple[str, int, int],
+    forest_param: Tuple[str, int, int],
+    svc_param: Tuple[str, int, int],
     cv_n: int,
 ) -> None:
 
@@ -104,7 +104,8 @@ def train(
             "use_uniform": use_uniform,
             "use_poly": use_poly,
         }
-        pipeline.set_params(classifier__estimator__random_state=random_state)
+        # pipeline.set_params(classifier__estimator__random_state=random_state)
+        pipeline.set_params(classifier__random_state=random_state)
 
         if estimator == "RandomForestClassifier()":
             (
@@ -112,18 +113,25 @@ def train(
                 params["max_depth"],
                 params["n_estimators"],
             ) = forest_param
+
             pipeline.set_params(
-                classifier__estimator__criterion=params["criterion"],
-                classifier__estimator__max_depth=params["max_depth"],
-                classifier__estimator__n_estimators=params["n_estimators"],
+                # classifier__estimator__criterion=params["criterion"],
+                # classifier__estimator__max_depth=params["max_depth"],
+                # classifier__estimator__n_estimators=params["n_estimators"],
+                classifier__criterion=params["criterion"],
+                classifier__max_depth=params["max_depth"],
+                classifier__n_estimators=params["n_estimators"],
             )
         if estimator == "SVC()":
             params["kernel"], params["C"], params["gamma"] = svc_param
 
             pipeline.set_params(
-                classifier__estimator__kernel=params["kernel"],
-                classifier__estimator__C=params["C"],
-                classifier__estimator__gamma=params["gamma"],
+                # classifier__estimator__kernel=params["kernel"],
+                # classifier__estimator__C=params["C"],
+                # classifier__estimator__gamma=params["gamma"],
+                classifier__kernel=params["kernel"],
+                classifier__C=params["C"],
+                classifier__gamma=params["gamma"],
             )
 
         scores = cross_validate(
@@ -149,11 +157,12 @@ def train(
             "Precision": np.mean(scores["test_precision_weighted"]),
         }
         mlflow.log_metrics(metr)
+        click.echo("Metrics from cross_validation:")
         click.echo(metr)
         pipeline.fit(features_train, target_train)
         test_pred = pipeline.predict(features_val)
         test_metr = metrics_group(target_val, test_pred)
-
+        click.echo("Test metrics:")
         click.echo(test_metr)
         dump(pipeline, save_model_path)
         click.echo(f"Model is saved to {save_model_path}.")
