@@ -44,8 +44,8 @@ poetry run mlflow ui
 
 ## Development
 
-The code in this repository was tested, formatted with black, and pass mypy typechecking before being commited to the repository.
-Development was condacted on Windows 10. Some corrections was added to dev files in comperison with demo project files.
+The code in this repository was tested, formatted with black, and pass mypy typechecking before being committed to the repository.
+Development was conducted on Windows 10. Some corrections was added to dev files in comparison with demo project files.
 
 Install all requirements (including dev requirements) to poetry environment:
 ```
@@ -76,7 +76,7 @@ python -m nox -r
 ## Experiments 
 ### (Task 7)
 Four metrics were used for evaluation: accuracy, f1, recall, precision. F1 was used for final choosing of best model.
-Details about metrics realisation can be found in *train.py* and *model_selection.py* files.
+Details about metrics realization can be found in *train.py* and *model_selection.py* files.
 KFold cross validation is used for training separate models (command *train*, file *train.py*).
 Nested cross validation is used for automatic hyperparameter search (command *model_selection*, file *model_selection.py*).
 
@@ -94,7 +94,7 @@ Nested cross validation is used for automatic hyperparameter search (command *mo
    Feature engineering techniques can be found in *pipeline.py* file.
 
 Only part of experiments are provided on screenshot.![ml_flow_exper_screen](https://user-images.githubusercontent.com/89841675/166705198-52ac9cff-d6eb-4d91-9740-2ccb2f97d57b.png)
- The Best results (accuracy: 0.855, f1: 0.853, recall: 0.855, precision: 0.853) was obtained with following parameters:
+ The Best result (accuracy: 0.855, f1: 0.853, recall: 0.855, precision: 0.853) was obtained with the following parameters:
 ```sh
 poetry run train --estimator=RandomForestClassifier() --forest-param=gini 32 150 --use-scaler=True --use-uniform=True --use-poly=False
 ```
@@ -105,8 +105,8 @@ Command model_selection run Grid Search with parameters that are placed in *para
 Function runs Grid Search using nested cross validation. Only best model (or models, if metrics are equal) is added to MLFlow. 
 
 New classification algorithms can be added to function if they are Sklearn classifiers. For using other algorithms they must be imported through
-pipeline.py file (for example: *from sklearn.neighbors import KNeighborsClassifier*).
-Please note, if you decide to rerun model_selection with parameters from parameters.py file, it will take quite a lot time.
+pipeline.py file (for example: *from sklearn.neighbors import KNeighborsClassifier*) and added to *parameter.py* file.
+Please note, if you decide to rerun model_selection with parameters from parameters.py file, it will take quite a lot of time.
 Five models were tested with different parameters and different feature engineering techniques.
 
 The best model always was RandomForestClassifier (possibly because I didn't find good hyperparameters for other models).
