@@ -39,11 +39,3 @@ parameters = [
         "classifier__gamma": [0.001, 0.0001],
     },
 ]
-
-# parameters = [{
-#         'classifier': [DecisionTreeClassifier()],
-#         'classifier__criterion': ['gini', 'entropy'],
-#         'classifier': [SVC()],
-#         'classifier__C': [1, 10],
-#
-#     }]
