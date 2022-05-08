@@ -7,14 +7,15 @@ import nox
 from nox.sessions import Session
 
 
-nox.options.sessions = "black", "mypy", "tests"
+nox.options.sessions = "black", "lint", "mypy", "tests"
 locations = "src", "tests", "noxfile.py"
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
     """Install packages constrained by Poetry's lock file.
     By default newest versions of packages are installed,
-    but we use versions from poetry.lock instead to guarantee reproducibility of sessions.
+    but we use versions from poetry.lock instead
+    to guarantee reproducibility of sessions.
     """
     with tempfile.NamedTemporaryFile(delete=False) as requirements:
 
@@ -36,6 +37,13 @@ def black(session: Session) -> None:
     args = session.posargs or locations
     install_with_constraints(session, "black")
     session.run("black", *args)
+
+
+@nox.session(python="3.9")
+def lint(session):
+    args = session.posargs or locations
+    install_with_constraints(session, "flake8")
+    session.run("flake8", *args)
 
 
 @nox.session(python="3.9")
