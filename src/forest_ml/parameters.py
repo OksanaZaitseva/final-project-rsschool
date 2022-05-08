@@ -14,7 +14,7 @@ parameters = [
     {
         "classifier": [DecisionTreeClassifier()],
         "classifier__criterion": ["gini", "entropy"],
-        # 'classifier__max_depth': np.linspace(3, 15, 5, dtype=int),
+        "classifier__max_depth": np.linspace(3, 15, 5, dtype=int),
     },
     {
         "classifier": [RandomForestClassifier()],

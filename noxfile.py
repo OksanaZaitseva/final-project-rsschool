@@ -52,4 +52,3 @@ def tests(session: Session) -> None:
     session.run("poetry", "export", "--without-hashes", external=True)
     session.install(".")
     session.run("pytest")
-
