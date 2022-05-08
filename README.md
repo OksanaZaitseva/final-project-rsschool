@@ -59,7 +59,11 @@ Code was formatted with [black](https://github.com/psf/black):
 ```
 poetry run black src tests noxfile.py
 ```
-Mypy:
+Code was formatted with [flake8](https://flake8.pycqa.org/en/latest/user/configuration.html):
+```
+poetry run black src tests noxfile.py
+```
+Code was formatted with [mypy](https://mypy.readthedocs.io/en/stable/):
 ```
 poetry run mypy src tests noxfile.py
 ```
@@ -125,4 +129,5 @@ Code is type annotated with mypy:
 
 ### (Task 14)
 To combine steps of testing and linting into a single command, nox was used:
-![nox](https://user-images.githubusercontent.com/89841675/167301464-8c8f534f-e88f-4aab-bb02-1f5b462ad40d.png)
+![nox](https://user-images.githubusercontent.com/89841675/167314391-47d25b78-6a24-4968-b79f-08e59a4a805d.png)
+
