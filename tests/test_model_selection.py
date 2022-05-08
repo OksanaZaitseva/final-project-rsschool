@@ -1,8 +1,6 @@
-import click
 from click.testing import CliRunner
 import pytest
 from forest_ml.model_selection import model_selection
-from forest_ml.parameters import parameters
 
 
 @pytest.fixture

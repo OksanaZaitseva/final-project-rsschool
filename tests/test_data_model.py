@@ -97,7 +97,7 @@ def test_keep_dir(
     train_df = pd.read_csv("tests/tem_dirs/test_dataset.csv")
     test_df = pd.read_csv("tests/tem_dirs/test_predict.csv")
     test_kaggle = pd.read_csv("tests/tem_dirs/test_predict_kaggle.csv")
-    with runner.isolated_filesystem(temp_dir=tmp_path) as td:
+    with runner.isolated_filesystem(temp_dir=tmp_path):
         train_df.to_csv("train_df.csv", index=False)
         test_df.to_csv("test_df.csv", index=False)
         test_kaggle.to_csv("test_kaggle.csv", index=False)

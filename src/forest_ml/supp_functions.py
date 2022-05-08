@@ -1,7 +1,7 @@
-import numpy as np
 import pandas as pd
 import click
-from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
+from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import recall_score, precision_score
 from typing import Any, Dict
 
 

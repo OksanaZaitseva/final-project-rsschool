@@ -1,7 +1,7 @@
 """Module for Grid Search with nested cross validation:
-
-   Inner loop calls scikit-learn’s GridSearchCV to achieve grid search of hyperparameter
-        evaluated on the inner loop val set,
+    Inner loop calls scikit-learn’s GridSearchCV
+    to achieve grid search of hyperparameter
+    evaluated on the inner loop val set,
     Outer loop can call KFold for generalization error.
     Only best models are added to MLFlow"""
 
@@ -12,7 +12,7 @@ import click
 import pandas as pd
 import mlflow
 
-from sklearn.model_selection import cross_validate, GridSearchCV, KFold
+from sklearn.model_selection import GridSearchCV, KFold
 
 from .data import get_dataset
 from .pipeline import create_pipeline
@@ -78,7 +78,7 @@ def model_selection(
     )
     if parameters_check(parameters):
         return
-    metric_list = ("accuracy", "f1_weighted", "recall_weighted", "precision_weighted")
+    metric_list = ["accuracy", "f1_weighted", "recall_weighted", "precision_weighted"]
     params = {
         "use_scaler": use_scaler,
         "use_uniform": use_uniform,
@@ -97,7 +97,8 @@ def model_selection(
             features_train.iloc[train_ix, :],
             features_train.iloc[test_ix, :],
         )
-        y_train, y_test = target_train.iloc[train_ix], target_train.iloc[test_ix]
+        y_train = target_train.iloc[train_ix]
+        y_test = target_train.iloc[test_ix]
         cv_inner = KFold(n_splits=inner_splits, shuffle=True, random_state=random_state)
 
         gscv = GridSearchCV(
@@ -113,22 +114,20 @@ def model_selection(
     params_best = pd.DataFrame(best_params)
     params_best.columns = [x.rsplit("__")[-1] for x in params_best.columns]
     params_best = params_best.merge(outer_metrics, left_index=True, right_index=True)
-    num_params = params_best.shape[1] - 4
+    num_p = params_best.shape[1] - 4
     params_best = (
-        params_best.groupby(params_best.columns[:num_params].to_list())
-        .mean()
-        .reset_index()
+        params_best.groupby(params_best.columns[:num_p].to_list()).mean().reset_index()
     )
     click.echo(params_best)
 
     for x in range(params_best.shape[0]):
         with mlflow.start_run():
-            params_add = params_best.loc[x, params_best.columns[:num_params]].to_dict()
+            params_add = params_best.loc[x, params_best.columns[:num_p]].to_dict()
             params_add["estimator"] = params_add["classifier"]
             del params_add["classifier"]
             params_add.update(params)
             mlflow.log_params(params_add)
             metr = params_best.loc[
-                x, params_best.columns[num_params : len(params_best.columns)]
+                x, params_best.columns[num_p : len(params_best.columns)]
             ].to_dict()
             mlflow.log_metrics(metr)

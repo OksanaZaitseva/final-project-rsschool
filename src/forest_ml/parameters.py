@@ -1,5 +1,6 @@
 """ Dictionary 'parameters' contains parameters for GridSearch
-    Dictionary is used by default. Content can be added for conducting  other experiments"""
+    Dictionary is used by default.
+    Content can be added for conducting  other experiments"""
 
 import numpy as np
 from sklearn.svm import SVC
