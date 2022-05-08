@@ -116,7 +116,8 @@ All tests are in test folder. Type of tests:
 
 ### (Task 12)
 Code is formatted with black and lint with flake8:
-![black](https://user-images.githubusercontent.com/89841675/167271178-9acec3e3-e296-4d92-9fbc-c22705288ab8.png)
+![black](https://user-images.githubusercontent.com/89841675/167301539-6bc0610c-3338-4b3b-8cca-54e7d7dbbfc1.png)
+
 
 ### (Task 13)
 Code is type annotated with mypy:
