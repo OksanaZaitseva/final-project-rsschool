@@ -61,7 +61,7 @@ poetry run black src tests noxfile.py
 ```
 Code was formatted with [flake8](https://flake8.pycqa.org/en/latest/user/configuration.html):
 ```
-poetry run black src tests noxfile.py
+poetry run flake8 src tests noxfile.py
 ```
 Code was formatted with [mypy](https://mypy.readthedocs.io/en/stable/):
 ```
