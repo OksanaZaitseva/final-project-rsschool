@@ -57,6 +57,7 @@ def mypy(session: Session) -> None:
 @nox.session(python="3.9")
 def tests(session: Session) -> None:
     """Testing using pytest"""
+    install_with_constraints(session, "pytest")
     session.run("poetry", "export", "--without-hashes", external=True)
     session.install(".")
     session.run("pytest")
