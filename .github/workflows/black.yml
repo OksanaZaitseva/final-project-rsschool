@@ -1,7 +1,7 @@
 name: Tests
 on: push
 jobs:
-  tests:
+  black:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -11,4 +11,5 @@ jobs:
         architecture: x64
     - run: pip install nox==2022.1.7
     - run: pip install poetry==1.1.13
+    - run: poetry install
     - run: poetry run black src tests noxfile.py
